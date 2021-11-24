@@ -1,0 +1,18 @@
+package ru.home.MyHHBot.botApi.handlers;
+
+public enum BotState {
+    GREETING,
+    CURRENT_OPTIONS,
+    FIND_JOB,
+    GET_VACANCIES,
+    ASK_OPTIONS,
+    ASK_COUNTRY,
+    ASK_REGION,
+    ASK_CITY,
+    ASK_SPECIALIZATION,
+    ASK_SPECIALIZATION_SUBLIST,
+    ASK_DISPLAY_WAGES,
+    ASK_MIN_SALARY,
+    FILLING_PROFILE,
+    PROFILE_FILED
+}
