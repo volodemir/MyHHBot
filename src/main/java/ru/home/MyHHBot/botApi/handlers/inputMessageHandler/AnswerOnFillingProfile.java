@@ -1,16 +1,14 @@
-package ru.home.MyHHBot.botApi.entity;
+package ru.home.MyHHBot.botApi.handlers.inputMessageHandler;
 
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.home.MyHHBot.botApi.InputMessageHandler;
-import ru.home.MyHHBot.botApi.handlers.BotState;
-import ru.home.MyHHBot.botApi.handlers.fillingProfile.FillingProfileHandler;
-import ru.home.MyHHBot.botApi.handlers.fillingProfile.UserProfileData;
-import ru.home.MyHHBot.cache.UserDataCache;
+import ru.home.MyHHBot.botApi.entity.BotState;
+import ru.home.MyHHBot.botApi.userData.UserProfileData;
+import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 
 @Slf4j
 @Component
@@ -18,6 +16,8 @@ import ru.home.MyHHBot.cache.UserDataCache;
 public class AnswerOnFillingProfile implements InputMessageHandler {
 
     private UserDataCache userDataCache;
+
+    private long userId;
 
     public AnswerOnFillingProfile(UserDataCache userDataCache) {
         this.userDataCache = userDataCache;
@@ -34,16 +34,21 @@ public class AnswerOnFillingProfile implements InputMessageHandler {
         return BotState.CURRENT_OPTIONS;
     }
 
+    public long setUserId (long usrId){
+        userId = usrId;
+        return userId;
+    }
+    @SneakyThrows
     private SendMessage processUsersInput(Message message) {
-        String userId = message.getFrom().getUserName();
         long chatId = message.getChatId();
         System.out.println("aof" + userId);
         System.out.println("aof chatid " + chatId);
 
-        /*userDataCache.getUserProfileData(userId);
-        SendMessage replyMarkup = showCurrentOptions(userId,chatId);*/
+        userDataCache.getUserProfileData(userId);
+        System.out.println(userDataCache.getUserProfileData(userId));
+        SendMessage replyMarkup = showCurrentOptions(userId, chatId);
 
-        return null;
+        return replyMarkup;
     }
 
     public SendMessage showCurrentOptions(long userId, long chatId){

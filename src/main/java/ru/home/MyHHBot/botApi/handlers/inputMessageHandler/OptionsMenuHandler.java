@@ -1,15 +1,14 @@
-package ru.home.MyHHBot.botApi.handlers.greeting;
+package ru.home.MyHHBot.botApi.handlers.inputMessageHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.home.MyHHBot.botApi.InputMessageHandler;
-import ru.home.MyHHBot.botApi.entity.OptionsMenu;
-import ru.home.MyHHBot.botApi.handlers.BotState;
-import ru.home.MyHHBot.botApi.handlers.fillingProfile.UserProfileData;
-import ru.home.MyHHBot.cache.UserDataCache;
+import ru.home.MyHHBot.botApi.entity.keyboard.OptionsMenu;
+import ru.home.MyHHBot.botApi.entity.BotState;
+import ru.home.MyHHBot.botApi.userData.UserProfileData;
+import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 import ru.home.MyHHBot.service.ReplyMessageService;
 
 @Slf4j
@@ -37,7 +36,7 @@ public class OptionsMenuHandler implements InputMessageHandler {
     }
 
     private SendMessage processUsersInput(Message inputMsg) {
-        long userId = inputMsg.getFrom().getId();
+        int userId = inputMsg.getFrom().getId();
         long chatId = inputMsg.getChatId();
         UserProfileData profileData = userDataCache.getUserProfileData(userId);
         BotState botState = userDataCache.getUsersCurrentBotState(userId);

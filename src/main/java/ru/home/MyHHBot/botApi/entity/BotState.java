@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.botApi.handlers;
+package ru.home.MyHHBot.botApi.entity;
 
 public enum BotState {
     GREETING,
@@ -13,6 +13,6 @@ public enum BotState {
     ASK_SPECIALIZATION_SUBLIST,
     ASK_DISPLAY_WAGES,
     ASK_MIN_SALARY,
-    FILLING_PROFILE,
-    PROFILE_FILED
+    ASK_JOB_DESCRIPTION,
+    FILLING_PROFILE
 }

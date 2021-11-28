@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.botApi.handlers.fillingProfile;
+package ru.home.MyHHBot.botApi.userData;
 
 /*Данные анкеты пользователя*/
 
@@ -25,6 +25,8 @@ public class UserProfileData {
 
     boolean displayWages;
     String displayWagesString;
+
+    String vacancyId;
 
     int minSalary;
 }

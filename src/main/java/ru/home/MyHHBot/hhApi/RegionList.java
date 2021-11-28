@@ -29,7 +29,6 @@ private HH[] regionArr;
 
     @SneakyThrows
     public InlineKeyboardMarkup generateRegionList(String destCountryId){
-        System.out.println("ищу");
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest requestHttp = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.hh.ru/areas"))
@@ -39,23 +38,19 @@ private HH[] regionArr;
         InlineKeyboardMarkup regionMenu = new InlineKeyboardMarkup();
 
         HttpResponse<String> response = client.send(requestHttp, HttpResponse.BodyHandlers.ofString());
-        ObjectMapper mapper = new ObjectMapper(); //преобразование из строки в JSON
+        ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String body = response.body();
         regionArr = mapper.readValue(body, HH[].class);
         for(HH r : regionArr) {
             r.getAreas().forEach(reg -> {
                         if (reg.getParent_id().equals(destCountryId)) {
-                            System.out.println(destCountryId);
-                            System.out.println(reg.getParent_id());
-                            System.out.println("Выполняюсь");
                             List<InlineKeyboardButton> regionRow = new ArrayList<>();
                             InlineKeyboardButton setRegionButton = new InlineKeyboardButton();
                             setRegionButton.setText(reg.getName());
                             setRegionButton.setCallbackData(reg.getId());
                             regionRow.add(setRegionButton);
                             regionButtons.add(regionRow);
-                            System.out.println("regGeetName " + reg.getName());
                         }
                 regionMenu.setKeyboard(regionButtons);
                     });

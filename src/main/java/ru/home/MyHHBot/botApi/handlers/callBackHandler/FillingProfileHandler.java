@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.botApi.handlers.fillingProfile;
+package ru.home.MyHHBot.botApi.handlers.callBackHandler;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -8,16 +8,19 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.home.MyHHBot.botApi.InputMessageHandler;
-import ru.home.MyHHBot.botApi.entity.AnswerOnFillingProfile;
-import ru.home.MyHHBot.botApi.entity.MinSalaryMenu;
-import ru.home.MyHHBot.botApi.entity.OptionsMenu;
-import ru.home.MyHHBot.botApi.entity.YesOrNoMenu;
-import ru.home.MyHHBot.botApi.handlers.BotState;
-import ru.home.MyHHBot.botApi.handlers.CallBackHandler;
-import ru.home.MyHHBot.botApi.handlers.TelegramFacade;
-import ru.home.MyHHBot.cache.UserDataCache;
+import ru.home.MyHHBot.botApi.handlers.inputMessageHandler.AnswerOnFillingProfile;
+import ru.home.MyHHBot.botApi.entity.keyboard.MinSalaryMenu;
+import ru.home.MyHHBot.botApi.entity.keyboard.OptionsMenu;
+import ru.home.MyHHBot.botApi.entity.keyboard.YesOrNoMenu;
+import ru.home.MyHHBot.botApi.entity.BotState;
+import ru.home.MyHHBot.botApi.handlers.inputMessageHandler.FindJobHandler;
+import ru.home.MyHHBot.botApi.handlers.inputMessageHandler.GetVacanciesHandler;
+import ru.home.MyHHBot.botApi.userData.UserProfileData;
+import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 import ru.home.MyHHBot.hhApi.*;
+import ru.home.MyHHBot.hhApi.list.CityList;
+import ru.home.MyHHBot.hhApi.list.CountryList;
+import ru.home.MyHHBot.hhApi.list.SpecializationList;
 
 @Slf4j
 @Component
@@ -35,11 +38,16 @@ public class FillingProfileHandler implements CallBackHandler{
     private MinSalaryMenu salaryMenu;
     private OptionsMenu optionMenu;
     private AnswerOnFillingProfile answerOnFillingProfile;
+    private FindJobHandler findJobHandler;
+    private @Getter long userId;
+    private GetVacanciesHandler getVacanciesHandler;
+    private VacanciesList vacanciesList;
 
     public FillingProfileHandler(UserDataCache userDataCache, YesOrNoMenu yesOrNoMenu, CountryList countryList,
                                  RegionList regionList, CityList cityList, SpecializationList specList,
                                  MinSalaryMenu salaryMenu, OptionsMenu optionMenu,
-                                  AnswerOnFillingProfile answerOnFillingProfile) {
+                                  AnswerOnFillingProfile answerOnFillingProfile, FindJobHandler findJobHandler,
+                                 GetVacanciesHandler getVacanciesHandler, VacanciesList vacanciesList) {
         this.userDataCache = userDataCache;
         this.yesOrNoMenu = yesOrNoMenu;
         this.countryList = countryList;
@@ -49,6 +57,10 @@ public class FillingProfileHandler implements CallBackHandler{
         this.salaryMenu = salaryMenu;
         this.optionMenu = optionMenu;
         this.answerOnFillingProfile = answerOnFillingProfile;
+        this.findJobHandler = findJobHandler;
+        this.getVacanciesHandler = getVacanciesHandler;
+        this.vacanciesList = vacanciesList;
+
     }
 
     /*@Override
@@ -72,13 +84,14 @@ public class FillingProfileHandler implements CallBackHandler{
 
     @SneakyThrows
     private SendMessage processCallBackQuery(CallbackQuery callbackQuery) {
-        Message message = callbackQuery.getMessage();
+      Message message = callbackQuery.getMessage();
         String data = callbackQuery.getData();
-        System.out.println("Message " + message);
-        long userId = message.getFrom().getId();
-        long chatId = message.getChatId();
+        userId = message.getFrom().getId();
+        long chatId = message.getChat().getId();
         String countryName;
         SendMessage replyToUser = null;
+        System.out.println("fillingChatid" + chatId);
+
 
         UserProfileData profileData = userDataCache.getUserProfileData(userId);
         BotState botState = userDataCache.getUsersCurrentBotState(userId);
@@ -95,13 +108,15 @@ public class FillingProfileHandler implements CallBackHandler{
 
 
         if (data.equals("Выберите свою страну из списка")) {
+
             profileData.setCountryId(null);
             profileData.setCountryName(null);
             replyToUser = new SendMessage(chatId, data);
+
             InlineKeyboardMarkup countryMarkup = countryList.generateCountryList();
             replyToUser.setReplyMarkup(countryMarkup);
             userDataCache.setUsersCurrentBotState(userId, BotState.ASK_COUNTRY);
-            System.out.println(userId);
+            System.out.println("bots " + botState);
         }
         if (botState.equals(BotState.ASK_COUNTRY)) {
             countryArr = countryList.getCountryArr();
@@ -156,17 +171,15 @@ public class FillingProfileHandler implements CallBackHandler{
         if (botState.equals(BotState.ASK_CITY)) {
             regionArr = regionList.getRegionArr();
             for (HH r : regionArr) {
-                r.getAreas().forEach(reg -> {
-                    reg.getAreas().forEach(city -> {
-                        String cityName = city.getName();
-                        if (data.equals(city.getId())) {
-                            profileData.setCityId(city.getId());
-                            profileData.setCityName(cityName);
-                            profileData.setGeneralRegionId(city.getId());
+                r.getAreas().forEach(reg -> reg.getAreas().forEach(city -> {
+                    String cityName = city.getName();
+                    if (data.equals(city.getId())) {
+                        profileData.setCityId(city.getId());
+                        profileData.setCityName(cityName);
+                        profileData.setGeneralRegionId(city.getId());
 
-                        }
-                    });
-                });
+                    }
+                }));
 
                 replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
                 replyToUser.setReplyMarkup(oMenu);
@@ -241,45 +254,47 @@ public class FillingProfileHandler implements CallBackHandler{
             replyToUser.setReplyMarkup(salaryMarkup);
             userDataCache.setUsersCurrentBotState(userId, BotState.ASK_MIN_SALARY);
         }
-        if (data.equals("от 30 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 30 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(30000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-        if (data.equals("от 50 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 50 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(50000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-        if (data.equals("от 70 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 70 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(70000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-        if (data.equals("от 90 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 90 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(90000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-        if (data.equals("от 110 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 110 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(110000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-        if (data.equals("от 130 000") && botState.equals(BotState.ASK_MIN_SALARY)) {
+        if (data.equals("от 130 000")) {
             profileData.setMinSalary(0);
             profileData.setMinSalary(130000);
             replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
             replyToUser.setReplyMarkup(oMenu);
         }
-            //throw new IllegalStateException("Unexpected value: " + data);
-            //replyToUser = replyCountry;
+
             userDataCache.saveUserProfileData(userId, profileData);
+        answerOnFillingProfile.setUserId(userId);
+        getVacanciesHandler.setUserId(userId);
+        System.out.println("filingprofile " + userId + profileData);
 
 
         return replyToUser;

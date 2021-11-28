@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 public class HH {
     private List<Job> items;
+    private List<Employer> employer;
     private List<Region> areas;
     private List<Specialization> specializations;
 

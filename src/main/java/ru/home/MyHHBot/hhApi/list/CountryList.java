@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.hhApi;
+package ru.home.MyHHBot.hhApi.list;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.home.MyHHBot.hhApi.Country;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -43,10 +44,6 @@ public class CountryList {
             countryArr = mapper.readValue(body, Country[].class);
             //int count = 0;
             for (Country c : countryArr) {
-                /*if (c!=null){
-                    count++;
-                }*/
-                    //System.out.println(c.getId());
                     List<InlineKeyboardButton> countryRow = new ArrayList<>();
                     InlineKeyboardButton setCountryButton = new InlineKeyboardButton();
                     setCountryButton.setText(c.getName());

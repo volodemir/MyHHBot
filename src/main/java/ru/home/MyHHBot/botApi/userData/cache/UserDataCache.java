@@ -1,8 +1,8 @@
-package ru.home.MyHHBot.cache;
+package ru.home.MyHHBot.botApi.userData.cache;
 
 import org.springframework.stereotype.Component;
-import ru.home.MyHHBot.botApi.handlers.BotState;
-import ru.home.MyHHBot.botApi.handlers.fillingProfile.UserProfileData;
+import ru.home.MyHHBot.botApi.entity.BotState;
+import ru.home.MyHHBot.botApi.userData.UserProfileData;
 
 import java.util.HashMap;
 import java.util.Map;

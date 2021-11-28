@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.botApi.entity;
+package ru.home.MyHHBot.botApi.entity.keyboard;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

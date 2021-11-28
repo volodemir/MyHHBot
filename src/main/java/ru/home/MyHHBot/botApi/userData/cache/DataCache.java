@@ -1,8 +1,8 @@
-package ru.home.MyHHBot.cache;
+package ru.home.MyHHBot.botApi.userData.cache;
 
 
-import ru.home.MyHHBot.botApi.handlers.BotState;
-import ru.home.MyHHBot.botApi.handlers.fillingProfile.UserProfileData;
+import ru.home.MyHHBot.botApi.entity.BotState;
+import ru.home.MyHHBot.botApi.userData.UserProfileData;
 
 public interface DataCache {
     void setUsersCurrentBotState(long userId, BotState botState);
