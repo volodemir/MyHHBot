@@ -23,7 +23,6 @@ import java.util.List;
 public class CityList {
     private HH[] regionArr;
 
-
     public CityList(HH[] regionArr) {
         this.regionArr = regionArr;
     }
@@ -40,7 +39,7 @@ public class CityList {
         InlineKeyboardMarkup cityMenu = new InlineKeyboardMarkup();
 
         HttpResponse<String> response = client.send(requestHttp, HttpResponse.BodyHandlers.ofString());
-        ObjectMapper mapper = new ObjectMapper(); //преобразование из строки в JSON
+        ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String body = response.body();
         regionArr = mapper.readValue(body, HH[].class);
@@ -56,8 +55,8 @@ public class CityList {
                     setCityButton.setCallbackData(city.getId());
                     cityRow.add(setCityButton);
                     cityButtons.add(cityRow);
-                    System.out.println("regGeetName " + city.getName());
-                }});});
+                }});
+            });
                 cityMenu.setKeyboard(cityButtons);
         }
         return cityMenu;

@@ -18,7 +18,6 @@ public class FindJobHandler implements InputMessageHandler {
     public FindJobHandler(UserDataCache userDataCache, ReplyMessageService messageService) {
         this.userDataCache = userDataCache;
         this.messageService = messageService;
-
     }
 
     @Override
@@ -35,18 +34,11 @@ public class FindJobHandler implements InputMessageHandler {
     }
 
     private SendMessage processUsersInput(Message inputMsg) {
-
         long chatId = inputMsg.getChatId();
-        System.out.println("findjob chatid " + chatId);
-
-        /*UserProfileData profileData = userDataCache.getUserProfileData(userId);
-        userDataCache.getStringProfileData(profileData);
-        BotState botState = userDataCache.getUsersCurrentBotState(userId);*/
         SendMessage replyToUser;
 
         replyToUser = messageService.getReplyMessage(chatId, "reply.askPosition");
         userDataCache.setUsersCurrentBotState(chatId, BotState.GET_VACANCIES);
         return replyToUser;
-
     }
 }

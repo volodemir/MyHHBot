@@ -10,11 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 public class Job {
-    String id;
-    String name;
+    public String id;
+    public String name;
 
     Area area;
-    Employer employer;
+   public Employer employer;
     Salary salary;
     Address address;
     Snippet snippet;

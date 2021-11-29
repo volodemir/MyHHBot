@@ -3,7 +3,6 @@ package ru.home.MyHHBot.botApi.userData.cache;
 import org.springframework.stereotype.Component;
 import ru.home.MyHHBot.botApi.entity.BotState;
 import ru.home.MyHHBot.botApi.userData.UserProfileData;
-
 import java.util.HashMap;
 import java.util.Map;
 

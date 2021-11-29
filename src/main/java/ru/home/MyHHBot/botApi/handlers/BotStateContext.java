@@ -36,5 +36,4 @@ public class BotStateContext {
     private CallBackHandler findCallBackQueryHandler (BotState currentState){
         return callBackHandlers.get(currentState);
     }
-
 }

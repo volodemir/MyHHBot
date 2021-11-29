@@ -45,7 +45,7 @@ public class OptionsMenu {
 
         InlineKeyboardButton setMinSalaryButton = new InlineKeyboardButton();
         setMinSalaryButton.setText("Задать минимальную з/п");
-        setMinSalaryButton.setCallbackData("Выберите минимальную желаемую з/п");
+        setMinSalaryButton.setCallbackData("Выберите минимальную з/п");
         minSalaryRow.add(setMinSalaryButton);
 
         oButtonsMenu.add(countryRow);

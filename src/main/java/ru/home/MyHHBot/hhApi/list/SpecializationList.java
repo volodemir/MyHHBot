@@ -55,7 +55,6 @@ public class SpecializationList {
         response.body();
         specMenu.setKeyboard(specButtons);
 
-
         return specMenu;
     }
     @SneakyThrows

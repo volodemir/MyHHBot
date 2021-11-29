@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.home.MyHHBot.botApi.entity.keyboard.OptionsMenu;
 import ru.home.MyHHBot.botApi.entity.BotState;
-import ru.home.MyHHBot.botApi.userData.UserProfileData;
 import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 import ru.home.MyHHBot.service.ReplyMessageService;
 
@@ -17,7 +16,6 @@ public class OptionsMenuHandler implements InputMessageHandler {
     private UserDataCache userDataCache;
     private ReplyMessageService messageService;
     private OptionsMenu optionMenuWithCountry;
-
 
     public OptionsMenuHandler(UserDataCache userDataCache, ReplyMessageService messageService, OptionsMenu optionMenu) {
         this.userDataCache = userDataCache;
@@ -38,8 +36,6 @@ public class OptionsMenuHandler implements InputMessageHandler {
     private SendMessage processUsersInput(Message inputMsg) {
         int userId = inputMsg.getFrom().getId();
         long chatId = inputMsg.getChatId();
-        UserProfileData profileData = userDataCache.getUserProfileData(userId);
-        BotState botState = userDataCache.getUsersCurrentBotState(userId);
         SendMessage replyToUser;
         replyToUser = messageService.getReplyMessageStr(chatId, "Задайте настройки для поиска");
 

@@ -16,7 +16,6 @@ import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 public class AnswerOnFillingProfile implements InputMessageHandler {
 
     private UserDataCache userDataCache;
-
     private long userId;
 
     public AnswerOnFillingProfile(UserDataCache userDataCache) {
@@ -27,7 +26,6 @@ public class AnswerOnFillingProfile implements InputMessageHandler {
     public SendMessage handle(Message message) {
         return processUsersInput(message);
     }
-
 
     @Override
     public BotState getHandlerName() {
@@ -41,18 +39,13 @@ public class AnswerOnFillingProfile implements InputMessageHandler {
     @SneakyThrows
     private SendMessage processUsersInput(Message message) {
         long chatId = message.getChatId();
-        System.out.println("aof" + userId);
-        System.out.println("aof chatid " + chatId);
-
         userDataCache.getUserProfileData(userId);
-        System.out.println(userDataCache.getUserProfileData(userId));
         SendMessage replyMarkup = showCurrentOptions(userId, chatId);
 
         return replyMarkup;
     }
 
     public SendMessage showCurrentOptions(long userId, long chatId){
-
         UserProfileData profileData = userDataCache.getUserProfileData(userId);
         SendMessage sm = new SendMessage(chatId, "Страна/Регион/Город - "
                 + profileData.getCountryName() + "/" + profileData.getRegionName() + "/"
@@ -63,6 +56,4 @@ public class AnswerOnFillingProfile implements InputMessageHandler {
 
         return sm;
     }
-
-
 }

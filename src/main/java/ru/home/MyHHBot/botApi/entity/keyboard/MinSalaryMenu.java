@@ -50,7 +50,6 @@ public class MinSalaryMenu {
             }
             salaryRow.add(setSalaryButton);
             sButtonsMenu.add(salaryRow);
-
         }
         salaryMenu.setKeyboard(sButtonsMenu);
 

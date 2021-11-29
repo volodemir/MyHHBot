@@ -1,7 +1,5 @@
 package ru.home.MyHHBot.botApi.userData;
 
-/*Данные анкеты пользователя*/
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

@@ -37,25 +37,21 @@ public class CountryList {
         List<List<InlineKeyboardButton>> countryButtons = new ArrayList<>();
         InlineKeyboardMarkup countryMenu = new InlineKeyboardMarkup();
 
-            HttpResponse<String> response = client.send(requestHttp, HttpResponse.BodyHandlers.ofString());
-            ObjectMapper mapper = new ObjectMapper(); //преобразование из строки в JSON
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            String body = response.body();
-            countryArr = mapper.readValue(body, Country[].class);
-            //int count = 0;
-            for (Country c : countryArr) {
-                    List<InlineKeyboardButton> countryRow = new ArrayList<>();
-                    InlineKeyboardButton setCountryButton = new InlineKeyboardButton();
-                    setCountryButton.setText(c.getName());
-                    setCountryButton.setCallbackData(c.getId());
-                    countryRow.add(setCountryButton);
-                    countryButtons.add(countryRow);
+        HttpResponse<String> response = client.send(requestHttp, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String body = response.body();
+        countryArr = mapper.readValue(body, Country[].class);
+        for (Country c : countryArr) {
+            List<InlineKeyboardButton> countryRow = new ArrayList<>();
+            InlineKeyboardButton setCountryButton = new InlineKeyboardButton();
+            setCountryButton.setText(c.getName());
+            setCountryButton.setCallbackData(c.getId());
+            countryRow.add(setCountryButton);
+            countryButtons.add(countryRow);
             }
-            //List<InlineKeyboardButton> regionRowNext;
-
             response.body();
             countryMenu.setKeyboard(countryButtons);
-
 
         return countryMenu;
     }

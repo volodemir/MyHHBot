@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-//import ru.home.MyHHBot.botApi.entity.GeneralMenu;
 import ru.home.MyHHBot.botApi.entity.BotState;
 import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 import ru.home.MyHHBot.service.ReplyMessageService;
@@ -63,11 +62,8 @@ public class GreetingHandler implements InputMessageHandler {
         generalMenu.setOneTimeKeyboard(true);
         generalMenu.setKeyboard(gButtons);
 
-
         SendMessage replyToUser = messageService.getReplyMessage(chatId, "reply.greeting");
         replyToUser.setReplyMarkup(generalMenu);
-
-        BotState botState = userDataCache.getUsersCurrentBotState(userId);
 
         return replyToUser;
     }

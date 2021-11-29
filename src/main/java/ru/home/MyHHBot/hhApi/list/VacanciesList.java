@@ -1,4 +1,4 @@
-package ru.home.MyHHBot.hhApi;
+package ru.home.MyHHBot.hhApi.list;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.home.MyHHBot.botApi.userData.UserProfileData;
 import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
+import ru.home.MyHHBot.hhApi.HH;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -34,10 +35,11 @@ public class VacanciesList {
     }
 
     @SneakyThrows
-    public SendMessage getVacanciesList(Message inputMsg, long userId) {
+    public InlineKeyboardMarkup getVacanciesList(Message inputMsg, long userId) {
         message = inputMsg.getText().replaceAll("\\s+","");
 
         UserProfileData profileData = userDataCache.getUserProfileData(userId);
+        System.out.println(profileData);
 
         SendMessage replyToUser = new SendMessage();
         replyToUser.setChatId(inputMsg.getChatId());
@@ -62,16 +64,16 @@ public class VacanciesList {
             String body = response.body();
             vacancy = mapper.readValue(body, HH.class);
 
-            StringBuilder vacancySb = new StringBuilder();
-            StringBuilder jobIdSB = new StringBuilder();
+            /*StringBuilder vacancySb = new StringBuilder();
+            StringBuilder jobIdSB = new StringBuilder();*/
                 vacancy.getItems().forEach(job -> {
-                    jobIdSB.append(job.getId());
+                    /*jobIdSB.append(job.getId());
                     vacancySb.append("Вакансия: ")
                             .append(job.name)
                             .append("\nСсылка: http://hh.ru/vacancy/")
                             .append(job.id)
                             .append(" " + job.employer.getName() + "\n");
-                    jobId = jobIdSB.toString();
+                    jobId = jobIdSB.toString();*/
                     List<InlineKeyboardButton> vacancyRow = new ArrayList<>();
                     InlineKeyboardButton setVacancyButton = new InlineKeyboardButton();
                     setVacancyButton.setText(job.getName() + " :: " + job.employer.getName());
@@ -79,8 +81,8 @@ public class VacanciesList {
                     vacancyRow.add(setVacancyButton);
                     vacancyButtons.add(vacancyRow);
                     });
-            replyToUser.setText(vacancySb.toString());
+            //replyToUser.setText(vacancySb.toString());
             vacancyMenu.setKeyboard(vacancyButtons);
 
-        return replyToUser;
+        return vacancyMenu;
 }}

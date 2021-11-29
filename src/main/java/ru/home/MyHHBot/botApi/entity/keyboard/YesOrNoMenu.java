@@ -1,6 +1,6 @@
 package ru.home.MyHHBot.botApi.entity.keyboard;
 
-import lombok.Getter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

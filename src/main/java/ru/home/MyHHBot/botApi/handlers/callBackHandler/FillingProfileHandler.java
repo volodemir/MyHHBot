@@ -20,6 +20,7 @@ import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
 import ru.home.MyHHBot.hhApi.*;
 import ru.home.MyHHBot.hhApi.list.CityList;
 import ru.home.MyHHBot.hhApi.list.CountryList;
+import ru.home.MyHHBot.hhApi.list.RegionList;
 import ru.home.MyHHBot.hhApi.list.SpecializationList;
 
 @Slf4j
@@ -41,13 +42,13 @@ public class FillingProfileHandler implements CallBackHandler{
     private FindJobHandler findJobHandler;
     private @Getter long userId;
     private GetVacanciesHandler getVacanciesHandler;
-    private VacanciesList vacanciesList;
 
     public FillingProfileHandler(UserDataCache userDataCache, YesOrNoMenu yesOrNoMenu, CountryList countryList,
                                  RegionList regionList, CityList cityList, SpecializationList specList,
                                  MinSalaryMenu salaryMenu, OptionsMenu optionMenu,
-                                  AnswerOnFillingProfile answerOnFillingProfile, FindJobHandler findJobHandler,
-                                 GetVacanciesHandler getVacanciesHandler, VacanciesList vacanciesList) {
+                                 AnswerOnFillingProfile answerOnFillingProfile, FindJobHandler findJobHandler,
+                                 GetVacanciesHandler getVacanciesHandler)
+    {
         this.userDataCache = userDataCache;
         this.yesOrNoMenu = yesOrNoMenu;
         this.countryList = countryList;
@@ -59,18 +60,7 @@ public class FillingProfileHandler implements CallBackHandler{
         this.answerOnFillingProfile = answerOnFillingProfile;
         this.findJobHandler = findJobHandler;
         this.getVacanciesHandler = getVacanciesHandler;
-        this.vacanciesList = vacanciesList;
-
     }
-
-    /*@Override
-    public SendMessage handle(Message message) {
-        if(userDataCache.getUsersCurrentBotState(message.getFrom().getId()).equals(BotState.FILLING_PROFILE)){
-            userDataCache.setUsersCurrentBotState(message.getFrom().getId(), BotState.ASK_POSITION);
-        }
-        return processUsersInput(message);
-    }*/
-
 
     @Override
     public SendMessage handleCallBack(CallbackQuery callbackQuery) {
@@ -90,12 +80,11 @@ public class FillingProfileHandler implements CallBackHandler{
         long chatId = message.getChat().getId();
         String countryName;
         SendMessage replyToUser = null;
-        System.out.println("fillingChatid" + chatId);
-
 
         UserProfileData profileData = userDataCache.getUserProfileData(userId);
         BotState botState = userDataCache.getUsersCurrentBotState(userId);
         InlineKeyboardMarkup oMenu = null;
+
         if (profileData.getCountryName() == null) {
             oMenu = optionMenu.generateOptionMenuWithCountry();
         }
@@ -106,9 +95,7 @@ public class FillingProfileHandler implements CallBackHandler{
             oMenu = optionMenu.generateOptionMenuWithCity();
         }
 
-
         if (data.equals("Выберите свою страну из списка")) {
-
             profileData.setCountryId(null);
             profileData.setCountryName(null);
             replyToUser = new SendMessage(chatId, data);
@@ -116,8 +103,8 @@ public class FillingProfileHandler implements CallBackHandler{
             InlineKeyboardMarkup countryMarkup = countryList.generateCountryList();
             replyToUser.setReplyMarkup(countryMarkup);
             userDataCache.setUsersCurrentBotState(userId, BotState.ASK_COUNTRY);
-            System.out.println("bots " + botState);
         }
+
         if (botState.equals(BotState.ASK_COUNTRY)) {
             countryArr = countryList.getCountryArr();
             for (Country c : countryArr) {
@@ -180,7 +167,6 @@ public class FillingProfileHandler implements CallBackHandler{
 
                     }
                 }));
-
                 replyToUser = answerOnFillingProfile.showCurrentOptions(userId, chatId);
                 replyToUser.setReplyMarkup(oMenu);
             }
@@ -247,7 +233,7 @@ public class FillingProfileHandler implements CallBackHandler{
             replyToUser.setReplyMarkup(oMenu);
         }
 
-        if (data.equals("Выберите минимальную желаемую з/п")) {
+        if (data.equals("Выберите минимальную з/п")) {
             profileData.setMinSalary(0);
             replyToUser = new SendMessage(chatId, data);
             InlineKeyboardMarkup salaryMarkup = salaryMenu.generateSalaryMenu();
@@ -291,11 +277,9 @@ public class FillingProfileHandler implements CallBackHandler{
             replyToUser.setReplyMarkup(oMenu);
         }
 
-            userDataCache.saveUserProfileData(userId, profileData);
+        userDataCache.saveUserProfileData(userId, profileData);
         answerOnFillingProfile.setUserId(userId);
         getVacanciesHandler.setUserId(userId);
-        System.out.println("filingprofile " + userId + profileData);
-
 
         return replyToUser;
     }

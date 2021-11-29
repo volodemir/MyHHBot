@@ -8,10 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.home.MyHHBot.botApi.entity.BotState;
 import ru.home.MyHHBot.botApi.userData.cache.UserDataCache;
-import ru.home.MyHHBot.hhApi.VacanciesList;
+import ru.home.MyHHBot.hhApi.list.VacanciesList;
 
 @Component
-//Используем lombok для логирования
 @Slf4j
 public class TelegramFacade {
     private BotStateContext botStateContext;
@@ -46,23 +45,20 @@ public class TelegramFacade {
         String inputMsg = message.getText();
         int userId = message.getFrom().getId();
         long chatId = message.getChat().getId();
-        System.out.println("facade user id " + userId);
-        System.out.println("facade chat id " + chatId);
         BotState botState;
         SendMessage replyMessage;
-
 
         switch (inputMsg){
             case "/start":
                 botState = BotState.GREETING;
                 break;
-            case "Поиск": //Поиск вакансии
+            case "Поиск":
                 botState = BotState.FIND_JOB;
                 break;
-            case "Настройки": //Настройки
+            case "Настройки":
                 botState = BotState.ASK_OPTIONS;
                 break;
-            case "Показать текущие настройки": //Настройки
+            case "Показать текущие настройки":
                 botState = BotState.CURRENT_OPTIONS;
                 break;
             default:
@@ -79,16 +75,14 @@ public class TelegramFacade {
         String data = callbackQuery.getData();
         BotState botState = null;
         System.out.println("jobID " + vacanciesList.getJobId());
-       /* try {
+       try {
         if (vacanciesList.getJobId().contains(data)) {
-    botState = BotState.ASK_JOB_DESCRIPTION;
-}}
+            botState = BotState.ASK_JOB_DESCRIPTION;
+        }   }
         catch (NullPointerException nullPointerException){
             botState = BotState.FILLING_PROFILE;
-        }*/
-            botState = BotState.FILLING_PROFILE;
+        }
         SendMessage replyMessage;
-
         userDataCache.setUsersCurrentBotState (userId, botState);
         replyMessage = botStateContext.processCallBackQuery(botState, callbackQuery);
 
